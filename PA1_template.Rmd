@@ -1,0 +1,228 @@
+# PA1. Reproducible Research ( Coursera)
+amaurandi@um.es  
+9.Junio.2014  
+----------------------------------------
+```{r setopts, echo =FALSE}
+opts_chunk$set(echo=T, results="asis")
+options(scipen = 1, digits = 3)  # set default digits
+library(xtable)
+library("lattice")
+
+```
+
+
+
+# Loading and processing the data
+
+Exploration of the data and data structure.  
+
+```{r readdata, echo=T, results="asis"}
+df<-read.table("activity.csv", sep=",", header=T)
+sdf<-summary(df)
+xt<-xtable(sdf)
+
+print(xt, type="html")
+
+```
+
+He have arround 288 observations per day.
+
+# What is mean total number of steps taken per day?
+
+
+
+```{r desc, echo=T}
+# no account of misssign values
+df1<-na.omit(df)
+su<-tapply(df1$steps, df1$date, sum)
+su<-as.numeric(su)
+```
+
+Histogram of total number of steps per day
+
+```{r histograma, fig.align='center',fig.height=5, fig.width=5}
+hist(su, main="Histogram of the total steps by day"
+     , breaks = 50
+     , freq=T
+      ,xlab="steps")
+```
+
+
+```{r descrip, echo=FALSE}
+# mean and median
+m<-mean(su, na.rm=T)
+m2<-median(su,  na.rm=T)
+
+```
+
+The mean of the total step per day is **`r m`** and the median is **`r m2 `**.
+
+# What is the average daily activity pattern?
+
+
+
+```{r timeserie1, fig.align='center',fig.height=5, fig.width=8}
+me<-tapply(df1$steps, df1$interval, mean)
+plot(me,type="l", xlab="interval",ylab="average of steps")
+```
+
+```{r maximo}
+maxinterval1<-dimnames(me)[[1]][rev(order(me))[1]]
+maxi1<-max(me)
+```
+
+The 5 minute interavl that on average across all the days in the dataset  contains the maximum number of steps is the **`r maxinterval1`**, the maximun is `r maxi1`.
+
+# Imputing missing values
+
+```{r NAcounts}
+nna<-as.numeric(sum(is.na(df$steps)))
+```
+
+```{r, echo=FALSE}
+cat("The number of NA are:",nna)
+```
+
+We will fill all of the missing values in the dataset with the mean for that 5� minute interval. And create a new dataset with the missing data filled in.   
+
+```{r fillingNAs}
+df2<-df  # with NAs
+ for (i in 1:nrow(df)){     # rellenamos con la media del intervalo, y creamos el dataf df2
+     if (is.na(df$steps[i])){
+         MM<-mean(df$steps[which(df$interval==df$interval[i])], na.rm = T)
+         if (!is.na(MM)) {
+             df2$steps[i]<-MM
+          } else {df2$steps[i]<-99}         
+         }     
+ }
+# df2 is the new dataset with missing filled in
+```
+
+The number of missing data are `r nna`
+```{r  suma2}
+su2<-tapply(df2$steps, df2$date, sum)
+su2<-as.numeric(su2)
+```
+
+Histogram of total number of steps per day of the dataset without missig data
+
+```{r histograma2, fig.align='center',fig.height=5, fig.width=5}
+hist(su2, main="Histogram of the total steps by day\n(no missig data)"
+     , breaks = 50
+     , freq=T
+     ,xlab="steps")
+```
+
+
+```{r descrip2, echo=FALSE}
+# mean and median
+m<-mean(su2, na.rm=T)
+m2<-median(su2,  na.rm=T)
+
+```
+
+
+After filling in the missing data with the mean of the interval, the mean of the total step per day is **`r m`** and the median is **`r m2 `**.   So we found very small diferences, oly the median change a bit.
+
+# Are there differences in activity patterns between weekdays and weekends?
+
+```{r weekends}
+# change factor to dates and set if they are weekdays or weekends
+dd<-as.character(df2$date)
+dd<- as.Date(dd, "%Y-%m-%d")
+dow<-weekdays(dd,abbreviate=T)  # "sáb", "dom"--> Saturday and Sunday
+# table(dow)
+dow[dow=="sáb"|dow=="dom"]<-"weekend"
+dow[dow!="weekend"]<-"weekday"
+table(dow)
+df2<-data.frame(df2,dow=factor(dow))
+```
+
+```{r plotweekday, fig.align='center'}
+# xyplot(steps~interval | dow, df2, col="blue",type="l")
+par(mfrow=c(1,1))
+dfaux<-df2[df2$dow=="weekday",]
+me<-tapply(dfaux$steps, dfaux$interval, mean)
+plot(me,type="l"
+     , xlab="interval"
+     , ylab="average of steps"
+     ,col="blue"
+     , xlim=c(0, 300)
+     ,lwd=1.5
+     , asp=T)
+dfaux<-df2[df2$dow=="weekend",]
+me<-tapply(dfaux$steps, dfaux$interval, mean)
+par(new=TRUE)
+plot(me,
+     type="l",
+     col="red", 
+     ylab="", xlab=""
+     ,xaxt='n', yaxt='n'
+     , xlim=c(0, 300)
+     ,lwd=1.5)
+legend("topleft", inset=.05
+#        , title="jjjjj"
+       ,c("weekdays","weekends")
+       ,lty=c(1,1)
+       ,lwd=c(1.5,1.5)
+       ,col=c("blue","red")
+       , horiz=F)
+```
+
+It seems that on weekend the activity (steps) are extend fom intervaal 100 till aproximately 250, on weekdays the maximun steps are arround 100. On the weekend there are more steps in later intervals than weekdays that theese steps are more concentrated arround the interval 100.  
+
+```{r plotweekday2, fig.align='center'}
+
+par(mfrow=c(2,1))
+dfaux<-df2[df2$dow=="weekday",]
+me<-tapply(dfaux$steps, dfaux$interval, mean)
+plot(me,type="l"
+     , xlab="interval"
+     , ylab="average of steps"
+     ,col="blue"
+     ,lwd=1.5
+     , xlim=c(0, 300)
+#      , asp=T
+     )
+dfaux<-df2[df2$dow=="weekend",]
+me<-tapply(dfaux$steps, dfaux$interval, mean)
+# par(new=TRUE)
+plot(me,
+     type="l",
+     col="red", 
+     ylab="", xlab=""
+     , xlim=c(0, 300)
+#      ,xaxt='n', yaxt='n'
+     ,lwd=1.5)
+legend("topleft", inset=.05
+#        , title="jjjjj"
+       ,c("weekdays","weekends")
+       ,lty=c(1,1)
+       ,lwd=c(1.5,1.5)
+       ,col=c("blue","red")
+       , horiz=F)
+```
+
+
+
+
+```{r}
+sessionInfo()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
