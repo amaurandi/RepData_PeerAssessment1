@@ -1,6 +1,7 @@
 # PA1. Reproducible Research ( Coursera)
-amaurandi@um.es  
-9.Junio.2014  
+amaurandi@um.es   
+9.Junio.2014    
+
 ----------------------------------------
 
 
@@ -21,7 +22,7 @@ print(xt, type = "html")
 ```
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Jun  9 16:47:11 2014 -->
+<!-- Tue Jun 10 16:44:52 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH>     steps </TH> <TH>         date </TH> <TH>    interval </TH>  </TR>
   <TR> <TD align="right"> 1 </TD> <TD> Min.   :  0   </TD> <TD> 2012-10-01:  288   </TD> <TD> Min.   :   0   </TD> </TR>
@@ -99,7 +100,7 @@ nna <- as.numeric(sum(is.na(df$steps)))
 The number of NA are: 2304
 
 
-We will fill all of the missing values in the dataset with the mean for that 5<ad> minute interval. And create a new dataset with the missing data filled in.   
+We will fill all of the missing values in the dataset with the mean for that 5? minute interval. And create a new dataset with the missing data filled in.   
 
 
 ```r
@@ -212,6 +213,7 @@ par(mfrow=c(2,1))
 dfaux<-df2[df2$dow=="weekday",]
 me<-tapply(dfaux$steps, dfaux$interval, mean)
 plot(me,type="l"
+     , main="weekdays"
      , xlab="interval"
      , ylab="average of steps"
      ,col="blue"
@@ -223,19 +225,15 @@ dfaux<-df2[df2$dow=="weekend",]
 me<-tapply(dfaux$steps, dfaux$interval, mean)
 # par(new=TRUE)
 plot(me,
-     type="l",
-     col="red", 
-     ylab="", xlab=""
+     type="l"
+     , main="weekends"
+     , xlab="interval"
+     , ylab="average of steps"
+     , col="red"
+#      , ylab="", xlab=""
      , xlim=c(0, 300)
 #      ,xaxt='n', yaxt='n'
-     ,lwd=1.5)
-legend("topleft", inset=.05
-#        , title="jjjjj"
-       ,c("weekdays","weekends")
-       ,lty=c(1,1)
-       ,lwd=c(1.5,1.5)
-       ,col=c("blue","red")
-       , horiz=F)
+     , lwd=1.5)
 ```
 
 <img src="figure/plotweekday2.png" title="plot of chunk plotweekday2" alt="plot of chunk plotweekday2" style="display: block; margin: auto;" />
@@ -249,7 +247,7 @@ legend("topleft", inset=.05
 sessionInfo()
 ```
 
-R version 3.1.0 beta (2014-03-28 r65330)
+R version 3.1.0 (2014-04-10)
 Platform: i686-pc-linux-gnu (32-bit)
 
 locale:
@@ -264,10 +262,10 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] lattice_0.20-27 xtable_1.7-3    knitr_1.5      
+[1] lattice_0.20-29 xtable_1.7-3    knitr_1.5      
 
 loaded via a namespace (and not attached):
-[1] evaluate_0.5.3 formatR_0.10   grid_3.1.0     stringr_0.6.2 
+[1] evaluate_0.5.5 formatR_0.10   grid_3.1.0     stringr_0.6.2 
 [5] tools_3.1.0   
 
 

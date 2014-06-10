@@ -1,6 +1,7 @@
 # PA1. Reproducible Research ( Coursera)
-amaurandi@um.es  
-9.Junio.2014  
+amaurandi@um.es   
+9.Junio.2014    
+
 ----------------------------------------
 ```{r setopts, echo =FALSE}
 opts_chunk$set(echo=T, results="asis")
@@ -83,7 +84,7 @@ nna<-as.numeric(sum(is.na(df$steps)))
 cat("The number of NA are:",nna)
 ```
 
-We will fill all of the missing values in the dataset with the mean for that 5­ minute interval. And create a new dataset with the missing data filled in.   
+We will fill all of the missing values in the dataset with the mean for that 5? minute interval. And create a new dataset with the missing data filled in.   
 
 ```{r fillingNAs}
 df2<-df  # with NAs
@@ -138,7 +139,7 @@ table(dow)
 df2<-data.frame(df2,dow=factor(dow))
 ```
 
-```{r plotweekday, fig.align='center'}
+```{r plotweekday, fig.align='center', fig.height=5, fig.width=8}
 # xyplot(steps~interval | dow, df2, col="blue",type="l")
 par(mfrow=c(1,1))
 dfaux<-df2[df2$dow=="weekday",]
@@ -171,12 +172,13 @@ legend("topleft", inset=.05
 
 It seems that on weekend the activity (steps) are extend fom intervaal 100 till aproximately 250, on weekdays the maximun steps are arround 100. On the weekend there are more steps in later intervals than weekdays that theese steps are more concentrated arround the interval 100.  
 
-```{r plotweekday2, fig.align='center'}
+```{r plotweekday2, fig.align='center', fig.height=5, fig.width=8}
 
 par(mfrow=c(2,1))
 dfaux<-df2[df2$dow=="weekday",]
 me<-tapply(dfaux$steps, dfaux$interval, mean)
 plot(me,type="l"
+     , main="weekdays"
      , xlab="interval"
      , ylab="average of steps"
      ,col="blue"
@@ -188,19 +190,16 @@ dfaux<-df2[df2$dow=="weekend",]
 me<-tapply(dfaux$steps, dfaux$interval, mean)
 # par(new=TRUE)
 plot(me,
-     type="l",
-     col="red", 
-     ylab="", xlab=""
+     type="l"
+     , main="weekends"
+     , xlab="interval"
+     , ylab="average of steps"
+     , col="red"
+#      , ylab="", xlab=""
      , xlim=c(0, 300)
 #      ,xaxt='n', yaxt='n'
-     ,lwd=1.5)
-legend("topleft", inset=.05
-#        , title="jjjjj"
-       ,c("weekdays","weekends")
-       ,lty=c(1,1)
-       ,lwd=c(1.5,1.5)
-       ,col=c("blue","red")
-       , horiz=F)
+     , lwd=1.5)
+
 ```
 
 
