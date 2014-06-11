@@ -1,7 +1,5 @@
 # PA1. Reproducible Research ( Coursera)
-amaurandi@um.es   
-9.Junio.2014    
-
+June 9th, 2014    
 ----------------------------------------
 ```{r setopts, echo =FALSE}
 opts_chunk$set(echo=T, results="asis")
@@ -15,9 +13,17 @@ library("lattice")
 
 # Loading and processing the data
 
+This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
+
 Exploration of the data and data structure.  
 
-```{r readdata, echo=T, results="asis"}
+```{r readdata, echo=T, results="asis", cache=TRUE}
+# download data from the source url
+filepath<-"https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+download.file(filepath, destfile=paste(getwd(),"/","activity.zip",sep=""), method="wget")           
+unzip("activity.zip")
+
+
 df<-read.table("activity.csv", sep=",", header=T)
 sdf<-summary(df)
 xt<-xtable(sdf)
@@ -25,6 +31,14 @@ xt<-xtable(sdf)
 print(xt, type="html")
 
 ```
+The variables included in this dataset are:
+* steps: Number of steps taking in a 5­minute interval (missing values are coded as  NA )
+* date: The date on which the measurement was taken in YYYY­MM­DD format
+* interval: Identifier for the 5­minute interval in which measurement was taken
+
+The dataset is stored in a comma­separated­value (CSV) file and there are a total of 17,568 observations
+in this dataset.
+
 
 He have arround 288 observations per day.
 
@@ -169,8 +183,9 @@ legend("topleft", inset=.05
        ,col=c("blue","red")
        , horiz=F)
 ```
+We observe that activity on the weekends tends to be more spread out over the day compared to the weekdays.
 
-It seems that on weekend the activity (steps) are extend fom intervaal 100 till aproximately 250, on weekdays the maximun steps are arround 100. On the weekend there are more steps in later intervals than weekdays that theese steps are more concentrated arround the interval 100.  
+It seems that **on weekend the activity (steps) are more more spread out over the intervals (day time) that on weekdays**. It may be because day routines are diferent (work, vacation).
 
 ```{r plotweekday2, fig.align='center', fig.height=5, fig.width=8}
 

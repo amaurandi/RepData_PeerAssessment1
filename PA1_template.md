@@ -1,7 +1,5 @@
 # PA1. Reproducible Research ( Coursera)
-amaurandi@um.es   
-9.Junio.2014    
-
+June 9th, 2014    
 ----------------------------------------
 
 
@@ -10,10 +8,19 @@ amaurandi@um.es
 
 # Loading and processing the data
 
+This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
+
 Exploration of the data and data structure.  
 
 
 ```r
+# download data from the source url
+filepath <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+download.file(filepath, destfile = paste(getwd(), "/", "activity.zip", sep = ""), 
+    method = "wget")
+unzip("activity.zip")
+
+
 df <- read.table("activity.csv", sep = ",", header = T)
 sdf <- summary(df)
 xt <- xtable(sdf)
@@ -22,7 +29,7 @@ print(xt, type = "html")
 ```
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Tue Jun 10 16:44:52 2014 -->
+<!-- Wed Jun 11 10:21:32 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH>     steps </TH> <TH>         date </TH> <TH>    interval </TH>  </TR>
   <TR> <TD align="right"> 1 </TD> <TD> Min.   :  0   </TD> <TD> 2012-10-01:  288   </TD> <TD> Min.   :   0   </TD> </TR>
@@ -33,6 +40,14 @@ print(xt, type = "html")
   <TR> <TD align="right"> 6 </TD> <TD> Max.   :806   </TD> <TD> 2012-10-06:  288   </TD> <TD> Max.   :2355   </TD> </TR>
   <TR> <TD align="right"> 7 </TD> <TD> NA's   :2304   </TD> <TD> (Other)   :15840   </TD> <TD>  </TD> </TR>
    </TABLE>
+
+The variables included in this dataset are:
+* steps: Number of steps taking in a 5<ad>minute interval (missing values are coded as  NA )
+* date: The date on which the measurement was taken in YYYY<ad>MM<ad>DD format
+* interval: Identifier for the 5<ad>minute interval in which measurement was taken
+
+The dataset is stored in a comma<ad>separated<ad>value (CSV) file and there are a total of 17,568 observations
+in this dataset.
 
 
 He have arround 288 observations per day.
@@ -203,8 +218,9 @@ legend("topleft", inset=.05
 
 <img src="figure/plotweekday.png" title="plot of chunk plotweekday" alt="plot of chunk plotweekday" style="display: block; margin: auto;" />
 
+We observe that activity on the weekends tends to be more spread out over the day compared to the weekdays.
 
-It seems that on weekend the activity (steps) are extend fom intervaal 100 till aproximately 250, on weekdays the maximun steps are arround 100. On the weekend there are more steps in later intervals than weekdays that theese steps are more concentrated arround the interval 100.  
+It seems that **on weekend the activity (steps) are more more spread out over the intervals (day time) that on weekdays**. It may be because day routines are diferent (work, vacation).
 
 
 ```r
@@ -265,8 +281,8 @@ other attached packages:
 [1] lattice_0.20-29 xtable_1.7-3    knitr_1.5      
 
 loaded via a namespace (and not attached):
-[1] evaluate_0.5.5 formatR_0.10   grid_3.1.0     stringr_0.6.2 
-[5] tools_3.1.0   
+[1] digest_0.6.4   evaluate_0.5.5 formatR_0.10   grid_3.1.0    
+[5] stringr_0.6.2  tools_3.1.0   
 
 
 
